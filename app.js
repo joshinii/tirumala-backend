@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
-const allowedOrigins = ['http://localhost:4200', 'https://your-production-domain.com'];
+const allowedOrigins = ['http://localhost:4200', 'http://tirumalaplanners.com/'];
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
