@@ -97,7 +97,7 @@ app.get('/api/assets/:file', (req, res) => {
 
   // Check if the file exists
   if (!fs.existsSync(filePath)) {
-    console.log('file path: '+filePath);
+    console.log('__dirname: '+__dirname+'file name: '+req.params.file);
     return res.status(404).send('File not found');
   }
 
@@ -128,6 +128,8 @@ app.get('/api/files', (req, res) => {
       const category = req.query.category; // Accept category as a query parameter
 
       const directoryPath = path.join(__dirname, 'assets');
+      console.log('directoryPath '+directoryPath)
+      console.log('category '+category)
       const allFiles = fs.readdirSync(directoryPath);
 
       const filteredFiles = allFiles.filter((file) => {
