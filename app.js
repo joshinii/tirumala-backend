@@ -93,7 +93,8 @@ app.post('/api/send-quote', async (req, res) => {
 
     // Send email
     await transporter.sendMail(mailOptions);
-    res.status(200).send('Form submitted and email sent successfully.');
+    res.status(200).json({ message: 'Form submitted and email sent successfully.' });
+
   } catch (error) {
     console.error('Error sending email:', error);
     res.status(500).send('Failed to send email.');
