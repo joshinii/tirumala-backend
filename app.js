@@ -16,7 +16,11 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
-const allowedOrigins = ['http://localhost:4200', 'https://tirumala-planners.onrender.com','https://www.tirumalaplanners.com/'];
+const allowedOrigins = [
+  'http://localhost:4200',
+  'https://tirumala-planners.onrender.com',
+  'https://www.tirumalaplanners.com'
+];
 
 app.use(cors({
   origin: (origin, callback) => {
