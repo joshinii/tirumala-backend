@@ -36,6 +36,9 @@ app.get('/', (req, res) => {
   res.send('Hello from your Node.js server!');
 });
 
+//to access assets
+app.use('/api/assets', cors(), express.static(path.join(__dirname, 'assets')));
+
 
 // Database setup
 const db = new sqlite3.Database('./data.db', (err) => {
