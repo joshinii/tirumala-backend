@@ -27,19 +27,9 @@ app.use(cors({
   }
 }));
 
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../website/dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../website/dist/index.html'));
-  });
-} else {
-  // Define a basic route (optional, for the root URL)
-  app.get('/', (req, res) => {
-    res.send('Hello from your Node.js server!');
-  });
-}
-
+app.get('/', (req, res) => {
+  res.send('Hello from your Node.js server!');
+});
 
 
 // Database setup
