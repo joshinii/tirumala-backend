@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const allowedOrigins = ['http://localhost:4200', 'https://tirumala-planners.onrender.com'];
+
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -117,6 +118,7 @@ app.get('/api/assets/:file', (req, res) => {
 
   // Inline content disposition
   res.setHeader('Content-Disposition', 'inline');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
 
   // Serve the file
   res.sendFile(filePath);
@@ -138,7 +140,7 @@ app.get('/api/files', (req, res) => {
           if (category === 'plan') return file.startsWith('plan_');
           return true; // Default: return all files
       });
-
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
       res.json(filteredFiles);
   } catch (error) {
       console.error('Error reading files:', error);
