@@ -93,8 +93,7 @@ app.post('/api/send-quote', async (req, res) => {
 
     // Send email
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'Form submitted and email sent successfully.' });
-
+    res.status(200).send('Form submitted and email sent successfully.');
   } catch (error) {
     console.error('Error sending email:', error);
     res.status(500).send('Failed to send email.');
@@ -106,7 +105,7 @@ app.get('/api/assets/:file', (req, res) => {
 
   // Check if the file exists
   if (!fs.existsSync(filePath)) {
-    console.log('__dirname: '+__dirname+'file name: '+req.params.file);
+    console.log('__dirname: ' + __dirname + 'file name: ' + req.params.file);
     return res.status(404).send('File not found');
   }
 
@@ -135,24 +134,24 @@ app.get('/api/assets/:file', (req, res) => {
 
 app.get('/api/files', (req, res) => {
   try {
-      const category = req.query.category; // Accept category as a query parameter
+    const category = req.query.category; // Accept category as a query parameter
 
-      const directoryPath = path.join(__dirname, 'assets');
-      console.log('directoryPath '+directoryPath)
-      console.log('category '+category)
-      const allFiles = fs.readdirSync(directoryPath);
+    const directoryPath = path.join(__dirname, 'assets');
+    console.log('directoryPath ' + directoryPath)
+    console.log('category ' + category)
+    const allFiles = fs.readdirSync(directoryPath);
 
-      const filteredFiles = allFiles.filter((file) => {
-          // Filter files based on category
-          if (category === 'elevation') return file.startsWith('elevation_');
-          if (category === 'plan') return file.startsWith('plan_');
-          return true; // Default: return all files
-      });
-      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-      res.json(filteredFiles);
+    const filteredFiles = allFiles.filter((file) => {
+      // Filter files based on category
+      if (category === 'elevation') return file.startsWith('elevation_');
+      if (category === 'plan') return file.startsWith('plan_');
+      return true; // Default: return all files
+    });
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.json(filteredFiles);
   } catch (error) {
-      console.error('Error reading files:', error);
-      res.status(500).json({ error: 'Something went wrong!' });
+    console.error('Error reading files:', error);
+    res.status(500).json({ error: 'Something went wrong!' });
   }
 });
 
