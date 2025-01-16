@@ -14,7 +14,6 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
 
 const allowedOrigins = [
   'http://localhost:4200',
@@ -93,10 +92,10 @@ app.post('/api/send-quote', async (req, res) => {
 
     // Send email
     await transporter.sendMail(mailOptions);
-    res.status(200).send('Form submitted and email sent successfully.');
+    res.status(200).json({ text: 'Form submitted and email sent successfully.' }); // Correctly send JSON response
   } catch (error) {
     console.error('Error sending email:', error);
-    res.status(500).send('Failed to send email.');
+    res.status(500).json({ text: 'Failed to send email.' }); // Correctly send JSON response
   }
 });
 
@@ -137,8 +136,6 @@ app.get('/api/files', (req, res) => {
     const category = req.query.category; // Accept category as a query parameter
 
     const directoryPath = path.join(__dirname, 'assets');
-    console.log('directoryPath ' + directoryPath)
-    console.log('category ' + category)
     const allFiles = fs.readdirSync(directoryPath);
 
     const filteredFiles = allFiles.filter((file) => {
