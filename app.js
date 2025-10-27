@@ -7,6 +7,15 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 
+// Validate required environment variables
+const requiredEnvVars = ['EMAIL_USER', 'EMAIL_PASS', 'EMAIL_OWNER'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+  console.error(`Error: Missing required environment variables: ${missingEnvVars.join(', ')}`);
+  console.error('Please create a .env file with EMAIL_USER, EMAIL_PASS, and EMAIL_OWNER');
+  process.exit(1);
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,7 +27,8 @@ app.use(bodyParser.json());
 const allowedOrigins = [
   'http://localhost:4200',
   'https://tirumala-planners.onrender.com',
-  'https://www.tirumalaplanners.com'
+  'https://www.tirumalaplanners.com',
+  'https://v0-tirumala-planners-k6aoirwdboc.vercel.app'
 ];
 
 app.use(cors({
@@ -65,23 +75,35 @@ app.post('/api/send-quote', async (req, res) => {
   const { name, email, phone, message } = req.body;
 
   if (!name || !email || !phone || !message) {
-    return res.status(400).send('All fields are required.');
+    return res.status(400).json({ text: 'All fields are required.' });
   }
 
   try {
+    // Insert contact into database first
+    await new Promise((resolve, reject) => {
+      db.run(
+        `INSERT INTO contacts (name, email, phone, message) VALUES (?, ?, ?, ?)`,
+        [name, email, phone, message],
+        (err) => {
+          if (err) reject(err);
+          else resolve();
+        }
+      );
+    });
+
     // Nodemailer configuration
     const transporter = nodemailer.createTransport({
-      service: 'gmail', // Use your email provider (e.g., Gmail, Outlook, etc.)
+      service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER, // Your email address
-        pass: process.env.EMAIL_PASS, // Your email password or app-specific password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
     // Email content
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_OWNER, // App owner's email
+      to: process.env.EMAIL_OWNER,
       subject: 'New Customer Inquiry - Tirumala Planners',
       text: `You have received a new customer request from the Tirumala Planners website. Please find the details below:
       \nName: ${name}
@@ -92,10 +114,10 @@ app.post('/api/send-quote', async (req, res) => {
 
     // Send email
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ text: 'Form submitted and email sent successfully.' }); // Correctly send JSON response
+    res.status(200).json({ text: 'Form submitted and email sent successfully.' });
   } catch (error) {
-    console.error('Error sending email:', error);
-    res.status(500).json({ text: 'Failed to send email.' }); // Correctly send JSON response
+    console.error('Error processing request:', error);
+    res.status(500).json({ text: 'Failed to send email.' });
   }
 });
 
